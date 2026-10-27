@@ -1,0 +1,51 @@
+OrbitWatch: Licencja niewyłączna na użytek prezentacyjny
+=========================================================
+
+Copyright © 2026 Ihor Skrypnyk
+Wszelkie prawa zastrzeżone.
+
+Niniejsza aplikacja ("OrbitWatch") została stworzona jako praca inżynierska
+na Uniwersytecie WSB Merito (Wydział Przedsiębiorczości i Innowacji w Warszawie) i jest własnością intelektualną autora.
+
+UŻYTKOWANIE
+-----------
+Aplikacja może być uruchamiana w celach prezentacyjnych i edukacyjnych,
+w szczególności jako interaktywna prezentacja techniczna dla studentów
+i zwiedzających instytucję uprawnioną pisemną zgodą autora.
+
+DOZWOLONE
+---------
+- Uruchamianie aplikacji przez promotora i recenzenta w celu oceny pracy dyplomowej
+- Uruchamianie aplikacji na sprzęcie należącym do uprawnionej instytucji
+- Wyświetlanie aplikacji publicznie w obrębie instytucji
+- Aktualizacja danych satelitarnych (TLE) z publicznych źródeł
+
+ZABRONIONE BEZ PISEMNEJ ZGODY AUTORA
+------------------------------------
+- Modyfikowanie kodu źródłowego aplikacji
+- Usuwanie lub ukrywanie informacji o autorstwie
+- Redystrybucja aplikacji lub jej części
+- Wykorzystanie kodu do tworzenia innych produktów
+- Użycie komercyjne wykraczające poza cele prezentacyjne
+- Sprzedaż dostępu do aplikacji
+
+ZALEŻNOŚCI ZEWNĘTRZNE
+---------------------
+Aplikacja używa następujących bibliotek/zasobów zewnętrznych, które
+podlegają własnym licencjom:
+- satellite.js (MIT License)
+- Flask, Flask-CORS, Flask-Limiter, Requests, Waitress (licencje BSD, MIT, Apache 2.0, ZPL)
+- Czcionka JetBrains Mono (SIL Open Font License 1.1)
+- Tekstura Ziemi "8K Earth Day Map", Copyright (c) 2010-2017 Solar System Scope,
+  https://www.solarsystemscope.com/textures (CC BY 4.0)
+- Dane TLE z CelesTrak.org / Space-Track.org (publiczne)
+
+WYŁĄCZENIE ODPOWIEDZIALNOŚCI
+----------------------------
+Aplikacja jest dostarczana "tak jak jest", bez żadnych gwarancji.
+Autor nie ponosi odpowiedzialności za jakiekolwiek szkody wynikające
+z użytkowania aplikacji.
+
+KONTAKT
+-------
+W sprawach licencji, błędów lub propozycji rozwoju aplikacji: autor, Ihor Skrypnyk.

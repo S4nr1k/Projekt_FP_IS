@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrbitWatch</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='9' fill='none' stroke='%2300ff66' stroke-width='2'/><circle cx='16' cy='16' r='2' fill='%2300ff66'/><ellipse cx='16' cy='16' rx='14' ry='6' fill='none' stroke='%2300ff66' stroke-width='1.2' transform='rotate(-30 16 16)'/></svg>">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <h1>OrbitWatch</h1>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <span class="s-label" data-i18n="total">total</span>
+      <span class="s-val" id="s-total">0</span>
+    </div>
+    <div class="stat">
+      <span class="s-label" data-i18n="vis">vis</span>
+      <span class="s-val" id="s-visible">0</span>
+    </div>
+    <div class="stat">
+      <span class="s-label" data-i18n="filt">filt</span>
+      <span class="s-val" id="s-filter">0</span>
+    </div>
+    <div class="stat">
+      <span class="s-label" data-i18n="fps">fps</span>
+      <span class="s-val" id="s-fps">--</span>
+    </div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang="pl" onclick="setLang('pl')">PL</button>
+    <span class="lang-sep">|</span>
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
+  <div class="header-clock">
+    <span class="clock-utc" id="clock-local">--:--:-- LOC</span>
+    <span class="clock-sep">·</span>
+    <span class="clock-utc" id="clock-utc" style="color:var(--dim)">--:--:-- UTC</span>
+    <span class="clock-sep">·</span>
+    <span class="clock-date" id="clock-date" style="color:var(--dim)">---</span>
+  </div>
+</header>
+
+<div class="main">
+  <div class="panel-left">
+    <div class="ps">
+      <div class="ps-title" data-i18n="search">search</div>
+      <div class="search-box">
+        <span class="search-icon">&#9906;</span>
+        <input type="text" id="search" data-i18n-placeholder="search_placeholder" placeholder="nazwa, NORAD ID...">
+      </div>
+    </div>
+
+    <div class="ps">
+      <div class="ps-title" data-i18n="filter">filter</div>
+      <div class="filter-list" id="filters">
+        <button class="filt-btn active" data-cat="all">
+          <span class="filt-dot" style="background:#00ff66"></span>
+          <span data-i18n="all">all</span>
+          <span class="filt-count" id="c-all">0</span>
+        </button>
+        <button class="filt-btn" data-cat="starlink">
+          <span class="filt-dot" style="background:#00ff66"></span>
+          <span data-i18n="starlink">starlink</span>
+          <span class="filt-count" id="c-starlink">0</span>
+        </button>
+        <button class="filt-btn" data-cat="iss">
+          <span class="filt-dot" style="background:#ffcc00"></span>
+          <span data-i18n="stations">stations</span>
+          <span class="filt-count" id="c-iss">0</span>
+        </button>
+        <button class="filt-btn" data-cat="weather">
+          <span class="filt-dot" style="background:#88ddaa"></span>
+          <span data-i18n="weather">weather</span>
+          <span class="filt-count" id="c-weather">0</span>
+        </button>
+        <button class="filt-btn" data-cat="gps">
+          <span class="filt-dot" style="background:#44aa77"></span>
+          <span data-i18n="gnss">gnss</span>
+          <span class="filt-count" id="c-gps">0</span>
+        </button>
+        <button class="filt-btn" data-cat="science">
+          <span class="filt-dot" style="background:#aaffcc"></span>
+          <span data-i18n="science">science</span>
+          <span class="filt-count" id="c-science">0</span>
+        </button>
+        <button class="filt-btn" data-cat="other">
+          <span class="filt-dot" style="background:#557766"></span>
+          <span data-i18n="debris">debris</span>
+          <span class="filt-count" id="c-other">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="ps">
+      <div class="ps-title">
+        <span data-i18n="altitude_range">altitude</span>
+        <span id="alt-range-label" style="float:right;color:var(--dim);text-transform:none">0 – 42000 km</span>
+      </div>
+      <div class="dual-slider">
+        <input type="range" id="alt-min" min="0" max="42000" step="100" value="0">
+        <input type="range" id="alt-max" min="0" max="42000" step="100" value="42000">
+      </div>
+      <div class="alt-legend">
+        <span class="alt-tag" data-zone="leo" onclick="setAltZone('leo')" title="160-2000 km">LEO</span>
+        <span class="alt-tag" data-zone="meo" onclick="setAltZone('meo')" title="2000-35000 km">MEO</span>
+        <span class="alt-tag" data-zone="geo" onclick="setAltZone('geo')" title="35000-42000 km">GEO</span>
+      </div>
+    </div>
+
+    <div class="ps">
+      <div class="ps-title">
+        <span data-i18n="velocity_range">velocity</span>
+        <span id="vel-range-label" style="float:right;color:var(--dim);text-transform:none">0 – 12 km/s</span>
+      </div>
+      <div class="dual-slider">
+        <input type="range" id="vel-min" min="0" max="12" step="0.1" value="0">
+        <input type="range" id="vel-max" min="0" max="12" step="0.1" value="12">
+      </div>
+    </div>
+
+    <div class="ps" style="padding-bottom:4px">
+      <div class="ps-title">
+        <span style="color:var(--warn)">&#9733;</span>
+        <span data-i18n="favorites">favorites</span>
+      </div>
+    </div>
+    <div id="favorites-list" style="max-height:140px;overflow-y:auto;border-bottom:1px solid var(--border)"></div>
+
+    <div class="ps" style="padding-bottom:4px">
+      <div class="ps-title" data-i18n="objects">objects</div>
+    </div>
+    <div class="sat-scroll" id="sat-list"></div>
+  </div>
+
+  <div class="globe-wrap" id="globe-wrap">
+    <canvas id="gl-canvas"></canvas>
+    <canvas id="globe"></canvas>
+    <div class="overlay" id="overlay"></div>
+    <!-- to robi: atrybucja wymagana przez licencje CC BY 4.0 tekstury Ziemi -->
+    <div class="tex-credit">
+      earth texture &copy; <a href="https://www.solarsystemscope.com/textures" target="_blank"
+        rel="noopener noreferrer">Solar System Scope</a>,
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+    </div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <canvas id="mini-map" width="240" height="120"
+      style="position:absolute;top:12px;right:12px;
+             background:rgba(0,0,0,0.55);border:1px solid var(--border);
+             display:none;pointer-events:none;z-index:5"></canvas>
+    <div id="perf-panel" style="position:absolute;top:12px;left:12px;
+         background:rgba(0,0,0,0.8);border:1px solid var(--accent);
+         color:var(--accent);font-family:var(--mono);font-size:10px;
+         padding:8px 10px;line-height:1.6;display:none;pointer-events:none;z-index:6"></div>
+    <div class="hint">
+      drag: rotate &middot; scroll: zoom<br>
+      click: select &middot; dblclick: track &middot; <span style="color:var(--accent);cursor:pointer" onclick="showHelp()">[H] help</span>
+    </div>
+    <div class="cam-controls">
+      <div class="cam-btn-row">
+        <button class="cam-btn" onclick="camRotate(0,-0.15)" title="up">&#9650;</button>
+      </div>
+      <div class="cam-btn-row">
+        <button class="cam-btn" onclick="camRotate(-0.15,0)" title="left">&#9664;</button>
+        <button class="cam-btn" onclick="camReset()" title="reset" style="font-size:11px">&#9678;</button>
+        <button class="cam-btn" onclick="camRotate(0.15,0)" title="right">&#9654;</button>
+      </div>
+      <div class="cam-btn-row">
+        <button class="cam-btn" onclick="camRotate(0,0.15)" title="down">&#9660;</button>
+      </div>
+      <div class="cam-btn-row" style="margin-top:6px">
+        <button class="cam-btn" onclick="camZoom(1.2)" title="zoom in">+</button>
+        <button class="cam-btn" onclick="camZoom(1/1.2)" title="zoom out">&minus;</button>
+      </div>
+    </div>
+
+    <div class="time-controls" id="time-controls">
+      <div class="tc-label">
+        <span data-i18n="time_warp">time warp</span>
+        <span id="tc-value" style="color:var(--accent);float:right">1&times;</span>
+      </div>
+      <div class="tc-btn-row">
+        <button class="tc-btn active" data-scale="1"     onclick="setTimeScaleUI(1)">1&times;</button>
+        <button class="tc-btn"        data-scale="10"    onclick="setTimeScaleUI(10)">10&times;</button>
+        <button class="tc-btn"        data-scale="100"   onclick="setTimeScaleUI(100)">100&times;</button>
+        <button class="tc-btn"        data-scale="1000"  onclick="setTimeScaleUI(1000)">1k&times;</button>
+        <button class="tc-btn"        data-scale="-1"    onclick="setTimeScaleUI(-1)" title="reverse">&#9664;&#9664;</button>
+      </div>
+      <button class="tc-now-btn" onclick="resetVirtualTime();_lastRealMs=Date.now();setTimeScaleUI(1)"
+        title="back to now"><span data-i18n="now">now</span></button>
+    </div>
+    <div class="loading-screen" id="loading">
+      <div class="load-text" data-i18n="loading_tle">loading TLE</div>
+      <div class="load-sub" id="load-sub" data-i18n="fetching">fetching from server</div>
+    </div>
+  </div>
+
+  <div class="panel-right" id="panel-right">
+    <div class="pr-empty" id="pr-empty" data-i18n="select_target">select target</div>
+  </div>
+</div>
+
+<!-- Space-Track settings modal -->
+<div id="st-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,10,0.85);z-index:500;display:none;align-items:center;justify-content:center">
+  <div style="background:#080f1e;border:1px solid rgba(0,180,255,0.3);border-radius:8px;padding:28px 32px;width:420px;font-family:var(--mono)">
+    <div style="font-size:0.85rem;color:var(--accent);letter-spacing:3px;margin-bottom:18px">SPACE-TRACK.ORG - KONFIGURACJA</div>
+    <div style="font-size:0.62rem;color:var(--dim);line-height:1.8;margin-bottom:16px">
+      Zarejestruj darmowe konto na <a href="https://www.space-track.org/auth/createAccount" target="_blank" style="color:var(--accent)">space-track.org</a>
+      (email + cel: "educational satellite tracker").<br><br>
+      Po skonfigurowaniu aplikacja pobierze:<br>
+      &bull; <span style="color:var(--green)">TLE orbitalne</span> dla ~20 000 obiektow<br>
+      &bull; <span style="color:var(--accent)">Katalog SATCAT</span>: kraj, data startu, typ, rozmiar dla 68 000 obiektow
+    </div>
+    <div style="font-size:0.58rem;color:var(--warn);line-height:1.7;margin-bottom:16px;border:1px solid var(--warn);padding:8px 10px;border-radius:3px">
+      &#9888; UWAGA PRAWNA: Dane Space-Track sa wlasnoscia rzadu USA. Prawo
+      federalne (10 USC 2274) zabrania redystrybucji surowych danych orbitalnych
+      osobom trzecim bez zgody USSPACECOM. Przy aktywnym Space-Track eksport
+      surowych TLE jest wylaczony. Do uzytku publicznego zalecane jest zrodlo
+      CelesTrak (posiada zgode na redystrybucje).
+    </div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:0.6rem;color:var(--dim);display:block;margin-bottom:4px">EMAIL</label>
+      <input id="st-user" type="email" placeholder="twoj@email.com"
+        style="width:100%;background:rgba(0,180,255,0.06);border:1px solid var(--border);color:var(--text);
+               font-family:var(--mono);font-size:0.7rem;padding:7px 10px;border-radius:3px;outline:none;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:0.6rem;color:var(--dim);display:block;margin-bottom:4px">HASLO</label>
+      <input id="st-pass" type="password" placeholder="haslo"
+        style="width:100%;background:rgba(0,180,255,0.06);border:1px solid var(--border);color:var(--text);
+               font-family:var(--mono);font-size:0.7rem;padding:7px 10px;border-radius:3px;outline:none;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="stSaveCredentials()"
+        style="flex:1;background:rgba(0,180,255,0.15);border:1px solid var(--accent);color:var(--accent);
+               font-family:var(--mono);font-size:0.68rem;padding:8px;border-radius:3px;cursor:pointer;letter-spacing:1px">
+        ZAPISZ I SYNCHRONIZUJ
+      </button>
+      <button onclick="document.getElementById('st-modal').style.display='none'"
+        style="background:transparent;border:1px solid var(--border);color:var(--dim);
+               font-family:var(--mono);font-size:0.68rem;padding:8px 14px;border-radius:3px;cursor:pointer">
+        ANULUJ
+      </button>
+    </div>
+    <div id="st-status-msg" style="font-size:0.6rem;color:var(--dim);margin-top:12px;min-height:16px"></div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="live-ind">LIVE</div>
+  <span id="tracking-ind" style="display:none;color:var(--accent)">tracking active</span>
+  <span id="tle-source-label">src: CelesTrak/bundled</span>
+  <span id="satdb-indicator" style="color:var(--dim)">satdb: none</span>
+  <button id="source-toggle" onclick="cycleDataSource()"
+    style="background:transparent;border:1px solid var(--border);color:var(--dim);
+           font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:0;cursor:pointer"
+    title="Switch data source (CelesTrak / Space-Track)">src: <span id="source-toggle-label">CelesTrak</span></button>
+  <button onclick="document.getElementById('st-modal').style.display='flex'"
+    style="background:transparent;border:1px solid var(--border);color:var(--dim);
+           font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:0;cursor:pointer"
+    title="Configure Space-Track.org"
+    data-i18n="space_track_btn">space-track</button>
+  <span>SGP4/SDP4</span>
+  <button id="debris-toggle" onclick="toggleDebris()"
+    style="background:transparent;border:1px solid var(--border);color:var(--dim);
+           font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:0;cursor:pointer"
+    title="Toggle debris"
+    data-i18n="debris_btn">debris</button>
+  <button id="colormode-toggle" onclick="toggleColorMode()"
+    style="background:transparent;border:1px solid var(--border);color:var(--dim);
+           font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:0;cursor:pointer"
+    title="Toggle color mode"><span id="colormode-prefix">color: </span><span id="colormode-label">category</span></button>
+  <button id="texq-toggle" onclick="cycleTexQuality()"
+    style="background:transparent;border:1px solid var(--border);color:var(--dim);
+           font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:0;cursor:pointer"
+    title="Earth texture quality (2K/5K/8K)">map: <span id="texq-label">5K</span></button>
+  <span class="bb-right" id="status-msg" data-i18n="init">init...</span>
+  <span style="color:var(--dim2);font-size:9px;margin-left:12px">© 2026 OrbitWatch</span>
+</div>
+
+<!-- to robi: laduje satellite.js 4.1.4 (MIT) z wlasnego serwera zamiast z zewnetrznego CDN -->
+<script src="vendor/satellite.min.js"></script>
+<script src="js/01-constants.js"></script>
+<script src="js/02-launch-sites.js"></script>
+<script src="js/03-state.js"></script>
+<script src="js/04-color-mode.js"></script>
+<script src="js/05-time-warp.js"></script>
+<script src="js/06-favorites.js"></script>
+<script src="js/07-persistence.js"></script>
+<script src="js/08-i18n.js"></script>
+<script src="js/10-data.js"></script>
+<script src="js/11-propagation-worker.js"></script>
+<script src="js/12-propagation.js"></script>
+<script src="js/13-coords.js"></script>
+<script src="js/14-main-loop.js"></script>
+<script src="js/15-draw.js"></script>
+<script src="js/16-launch-sites-ui.js"></script>
+<script src="js/16b-draw-sats.js"></script>
+<script src="js/17-minimap.js"></script>
+<script src="js/18-mouse.js"></script>
+<script src="js/19-select.js"></script>
+<script src="js/20-chase-cam.js"></script>
+<script src="js/21-spacetrack.js"></script>
+<script src="js/22-filter-search.js"></script>
+<script src="js/23-camera-controls.js"></script>
+<script src="js/24-clock.js"></script>
+<script src="js/25-ui-helpers.js"></script>
+<script src="js/26-fallback-tle.js"></script>
+<script src="js/09b-webgl-init.js"></script>
+<script src="js/09-boot.js"></script>
+</body>
+</html>
